@@ -6,6 +6,7 @@ dist
 *.log
 .DS_Store
 .vercel
+*.tsbuildinfo
 
 # Local Claude Code settings
 .claude/
