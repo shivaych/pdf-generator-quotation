@@ -383,11 +383,15 @@ function Header({ company, docTitle, reference }: {
   );
 }
 
-function PageFooter({ reference, page, total }: { reference: string; page: number; total: number }) {
+function PageFooter({ reference }: { reference: string }) {
   return (
-    <Text style={styles.pageFooter} fixed>
-      PAGE {page} OF {total} - {reference}
-    </Text>
+    <Text
+      style={styles.pageFooter}
+      fixed
+      render={({ pageNumber, totalPages }) =>
+        `PAGE ${pageNumber} OF ${totalPages} - ${reference}`
+      }
+    />
   );
 }
 
@@ -406,16 +410,34 @@ export function QuotationPDF({ data }: { data: QuotationInput }) {
   const gstPercent = typeof data.gstPercent === "number" ? data.gstPercent : 0;
   const gstAmount = Math.round((subtotal * gstPercent) / 100);
   const grandTotal = subtotal + gstAmount;
-  const totalPages = 2;
   const docTitle = (data.documentTitle || "ESTIMATE").toUpperCase();
 
-  const schedule = (data.paymentSchedule && data.paymentSchedule.length > 0
-    ? data.paymentSchedule
-    : []
-  ).map((p) => ({
-    ...p,
-    amount: Math.round((grandTotal * p.percent) / 100),
-  }));
+  const schedule = (data.paymentSchedule || [])
+    .filter((p) => p && (p.percent > 0 || (p.label || "").trim()))
+    .map((p) => ({
+      ...p,
+      amount: Math.round((grandTotal * p.percent) / 100),
+    }));
+  const includedItems = (data.whatsIncluded || []).filter((s) => s && s.trim());
+  const hasMaintenance = !!(
+    data.maintenanceSupport &&
+    ((data.maintenanceSupport.description || "").trim() ||
+      (data.maintenanceSupport.cost || "").trim())
+  );
+  const hasBanking = !!(
+    data.banking &&
+    (data.banking.accountHolder?.trim() ||
+      data.banking.bank?.trim() ||
+      data.banking.accountNo?.trim() ||
+      data.banking.ifsc?.trim())
+  );
+  const termsLines = (data.termsAndConditions || []).filter((s) => s && s.trim());
+  const hasPage2 =
+    schedule.length > 0 ||
+    includedItems.length > 0 ||
+    hasMaintenance ||
+    hasBanking ||
+    termsLines.length > 0;
 
   return (
     <Document title={`${docTitle} - ${data.reference}`}>
@@ -546,10 +568,11 @@ export function QuotationPDF({ data }: { data: QuotationInput }) {
           </View>
         </View>
 
-        <PageFooter reference={data.reference} page={1} total={totalPages} />
+        <PageFooter reference={data.reference} />
       </Page>
 
       {/* ---------------- PAGE 2 ---------------- */}
+      {hasPage2 ? (
       <Page size="A4" style={styles.page}>
         <Header company={data.company} docTitle={docTitle} reference={data.reference} />
 
@@ -574,49 +597,65 @@ export function QuotationPDF({ data }: { data: QuotationInput }) {
           </>
         ) : null}
 
-        <View style={styles.splitRow}>
-          <View style={styles.splitCol}>
-            <Text style={styles.payHeading}>What&apos;s Included</Text>
-            {(data.whatsIncluded || []).map((line, idx) => (
-              <View key={idx} style={styles.bulletRow}>
-                <Text style={styles.bulletDash}>-</Text>
-                <Text style={styles.bulletText}>{line}</Text>
+        {includedItems.length > 0 || hasMaintenance ? (
+          <View style={styles.splitRow}>
+            {includedItems.length > 0 ? (
+              <View style={styles.splitCol}>
+                <Text style={styles.payHeading}>What&apos;s Included</Text>
+                {includedItems.map((line, idx) => (
+                  <View key={idx} style={styles.bulletRow}>
+                    <Text style={styles.bulletDash}>-</Text>
+                    <Text style={styles.bulletText}>{line}</Text>
+                  </View>
+                ))}
               </View>
-            ))}
+            ) : null}
+            {hasMaintenance ? (
+              <View style={styles.splitCol}>
+                <Text style={styles.payHeading}>Maintenance Support</Text>
+                {data.maintenanceSupport?.description ? (
+                  <Text style={styles.maintenanceDesc}>
+                    {data.maintenanceSupport.description}
+                  </Text>
+                ) : null}
+                {data.maintenanceSupport?.cost ? (
+                  <Text style={styles.maintenanceCost}>
+                    {data.maintenanceSupport.cost}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
           </View>
-          {data.maintenanceSupport ? (
-            <View style={styles.splitCol}>
-              <Text style={styles.payHeading}>Maintenance Support</Text>
-              <Text style={styles.maintenanceDesc}>
-                {data.maintenanceSupport.description}
-              </Text>
-              <Text style={styles.maintenanceCost}>
-                {data.maintenanceSupport.cost}
-              </Text>
-            </View>
-          ) : null}
-        </View>
+        ) : null}
 
-        {data.banking ? (
+        {hasBanking && data.banking ? (
           <View style={styles.bankBox}>
             <View style={styles.bankLeft}>
               <Text style={styles.bankHeading}>Banking Details for Payment</Text>
-              <View style={styles.bankRow}>
-                <Text style={styles.bankKey}>Account Holder</Text>
-                <Text style={styles.bankVal}>{data.banking.accountHolder}</Text>
-              </View>
-              <View style={styles.bankRow}>
-                <Text style={styles.bankKey}>Bank</Text>
-                <Text style={styles.bankVal}>{data.banking.bank}</Text>
-              </View>
-              <View style={styles.bankRow}>
-                <Text style={styles.bankKey}>Account No.</Text>
-                <Text style={styles.bankVal}>{data.banking.accountNo}</Text>
-              </View>
-              <View style={styles.bankRow}>
-                <Text style={styles.bankKey}>IFSC Code</Text>
-                <Text style={styles.bankVal}>{data.banking.ifsc}</Text>
-              </View>
+              {data.banking.accountHolder ? (
+                <View style={styles.bankRow}>
+                  <Text style={styles.bankKey}>Account Holder</Text>
+                  <Text style={styles.bankVal}>{data.banking.accountHolder}</Text>
+                </View>
+              ) : null}
+              {data.banking.bank ? (
+                <View style={styles.bankRow}>
+                  <Text style={styles.bankKey}>Bank</Text>
+                  <Text style={styles.bankVal}>{data.banking.bank}</Text>
+                </View>
+              ) : null}
+              {data.banking.accountNo ? (
+                <View style={styles.bankRow}>
+                  <Text style={styles.bankKey}>Account No.</Text>
+                  <Text style={styles.bankVal}>{data.banking.accountNo}</Text>
+                </View>
+              ) : null}
+              {data.banking.ifsc ? (
+                <View style={styles.bankRow}>
+                  <Text style={styles.bankKey}>IFSC Code</Text>
+                  <Text style={styles.bankVal}>{data.banking.ifsc}</Text>
+                </View>
+              ) : null}
             </View>
             <View style={styles.bankRight}>
               <Text style={styles.qrLabel}>Scan and Pay</Text>
@@ -627,10 +666,10 @@ export function QuotationPDF({ data }: { data: QuotationInput }) {
           </View>
         ) : null}
 
-        {data.termsAndConditions && data.termsAndConditions.length > 0 ? (
+        {termsLines.length > 0 ? (
           <View>
             <Text style={styles.termsHeading}>Terms &amp; Conditions</Text>
-            {data.termsAndConditions.map((line, idx) => (
+            {termsLines.map((line, idx) => (
               <View key={idx} style={styles.bulletRow}>
                 <Text style={styles.bulletDash}>-</Text>
                 <Text style={styles.bulletText}>{line}</Text>
@@ -670,8 +709,9 @@ export function QuotationPDF({ data }: { data: QuotationInput }) {
           </View>
         </View>
 
-        <PageFooter reference={data.reference} page={2} total={totalPages} />
+        <PageFooter reference={data.reference} />
       </Page>
+      ) : null}
     </Document>
   );
 }

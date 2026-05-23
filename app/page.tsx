@@ -75,6 +75,12 @@ function calcAmount(it: LineItem): number {
   return Math.round(q * (it.rate || 0));
 }
 
+// For <input type="number"> — show empty string when value is 0 so the
+// placeholder is visible and users don't have to clear a leading "0".
+function numVal(n: number | undefined | null): number | "" {
+  return !n ? "" : n;
+}
+
 export default function Home() {
   const [data, setData] = useState<QuotationInput>(emptyState);
   const [active, setActive] = useState<SectionId>("company");
@@ -641,9 +647,11 @@ export default function Home() {
                       <td>
                         <input
                           type="number"
+                          inputMode="decimal"
                           className="input"
                           style={{ textAlign: "right" }}
-                          value={Number(it.quantity) || 0}
+                          placeholder="0"
+                          value={numVal(typeof it.quantity === "number" ? it.quantity : parseFloat(String(it.quantity)) || 0)}
                           onChange={(e) => updateItem(i, { quantity: Number(e.target.value) || 0 })}
                         />
                       </td>
@@ -658,9 +666,11 @@ export default function Home() {
                       <td>
                         <input
                           type="number"
+                          inputMode="decimal"
                           className="input"
                           style={{ textAlign: "right" }}
-                          value={it.rate || 0}
+                          placeholder="0"
+                          value={numVal(it.rate)}
                           onChange={(e) => updateItem(i, { rate: Number(e.target.value) || 0 })}
                         />
                       </td>
@@ -714,9 +724,10 @@ export default function Home() {
                     />
                     <input
                       type="number"
+                      inputMode="decimal"
                       className="input"
                       placeholder="Amount"
-                      value={ex.amount || 0}
+                      value={numVal(ex.amount)}
                       onChange={(e) => updateExtra(i, { amount: Number(e.target.value) || 0 })}
                     />
                   </div>
@@ -746,7 +757,8 @@ export default function Home() {
                   min={0}
                   max={100}
                   className="input"
-                  value={data.gstPercent ?? 0}
+                  placeholder="0"
+                  value={numVal(data.gstPercent)}
                   onChange={(e) => set("gstPercent", Number(e.target.value) || 0)}
                 />
                 <div className="field__hint">Set to 0 to hide GST in the PDF.</div>
@@ -781,7 +793,7 @@ export default function Home() {
                     max={100}
                     className="input"
                     placeholder="%"
-                    value={s.percent || 0}
+                    value={numVal(s.percent)}
                     onChange={(e) => updateSched(i, { percent: Number(e.target.value) || 0 })}
                   />
                   <input
