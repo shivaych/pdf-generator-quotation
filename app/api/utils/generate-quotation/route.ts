@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import React from "react";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { QuotationPDF } from "@/lib/QuotationPDF";
 import type { QuotationInput } from "@/lib/types";
@@ -46,9 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const buffer = await renderToBuffer(
-      React.createElement(QuotationPDF, { data: result.data }),
-    );
+    const buffer = await renderToBuffer(QuotationPDF({ data: result.data }));
     const filename = `${slugify(result.data.documentTitle || "quotation")}-${slugify(result.data.clientName)}.pdf`;
     return new NextResponse(new Uint8Array(buffer), {
       status: 200,

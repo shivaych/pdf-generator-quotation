@@ -13,3 +13,5 @@ dist
 # Test outputs (regenerable via API)
 /generated-quotation.pdf
 /single-item.pdf
+
+.vercel
