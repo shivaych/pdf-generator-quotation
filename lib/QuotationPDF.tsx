@@ -11,17 +11,17 @@ import type { QuotationInput, LineItem } from "./types";
 import { formatINR, rupeesInWords } from "./numberToWords";
 
 const COLORS = {
-  primary: "#3F6B43",
-  primaryDark: "#2F5236",
-  accent: "#A88B4A",
-  cream: "#F5EFE0",
-  creamSoft: "#FBF8F0",
-  border: "#E5DCC3",
-  textDark: "#1F2A24",
-  textMuted: "#6B6B6B",
-  tableHeader: "#3F6B43",
-  rowAlt: "#FBF8F0",
-  divider: "#D8CFB8",
+  primary: "#4F46E5",
+  primaryDark: "#4338CA",
+  accent: "#F59E0B",
+  cream: "#F1F5F9",
+  creamSoft: "#F8FAFC",
+  border: "#E2E8F0",
+  textDark: "#0F172A",
+  textMuted: "#64748B",
+  tableHeader: "#4F46E5",
+  rowAlt: "#F8FAFC",
+  divider: "#CBD5E1",
 };
 
 const styles = StyleSheet.create({
