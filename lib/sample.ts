@@ -1,0 +1,107 @@
+import type { QuotationInput } from "./types";
+
+export const sampleQuotation: QuotationInput = {
+  company: {
+    name: "KarmYog Vatika",
+    tagline: "Biophilic Learning Garden Initiative",
+    legalName: "NatureLink Education Network Pvt. Ltd.",
+    city: "Kolkata",
+    website: "www.plantlibrary.net",
+  },
+  reference: "KV/EST/DG/2026-05",
+  documentTitle: "ESTIMATE",
+  clientName: "Ms. Debopriya Ghosh",
+  clientSubtitle: "Horizon, Balcony Biophilic Setup - Bamboo Structure",
+  date: "2 May 2026",
+  validUntil: "1 June 2026",
+  validityLabel: "30 days",
+  preparedByLabel: "KarmYog Vatika Team",
+  projectType: "Balcony Biophilic Setup - Bamboo Structure",
+  projectTitle: "Bamboo Structure Balcony Biophilic Transformation",
+  projectSubtitle: "Horizon, Balcony Biophilic Setup - Bamboo Structure",
+  zones: 1,
+  items: [
+    {
+      name: "Main Structural Frame - Bamboo Pillar",
+      description: "60 feet",
+      quantity: 60,
+      unit: "feet",
+      rate: 80,
+    },
+    {
+      name: "Horizontal & Cross Support",
+      description: "125 feet",
+      quantity: 125,
+      unit: "feet",
+      rate: 20,
+    },
+    {
+      name: "Color, Paint & Termite Treatment",
+      description: "Full frame treatment",
+      quantity: 1,
+      unit: "unit",
+      rate: 1500,
+    },
+    {
+      name: "Hanging Bamboo Planter with Plants & Light",
+      description: "Bamboo hanging planter",
+      quantity: 8,
+      unit: "pcs",
+      rate: 1000,
+    },
+    {
+      name: "B2 Fabric Box with Light & Plants",
+      description: "Fabric planter box with integrated lighting",
+      quantity: 6,
+      unit: "pcs",
+      rate: 3000,
+    },
+    {
+      name: "Green Mat for Floor",
+      description: "Artificial green mat",
+      quantity: 60,
+      unit: "sqft",
+      rate: 35,
+    },
+  ],
+  extraCharges: [
+    {
+      label: "Installation & Setup (2 Skilled + 2 Unskilled, 2 Days)",
+      amount: 2560,
+    },
+  ],
+  gstPercent: 18,
+  paymentSchedule: [
+    { percent: 50, label: "Upon Confirmation" },
+    { percent: 40, label: "Prior to Dispatch" },
+    { percent: 10, label: "Upon Completion" },
+  ],
+  whatsIncluded: [
+    "All listed material and services",
+    "Professional installation and site cleanup",
+    "30-day post-installation support",
+    "Final estimate documentation",
+  ],
+  maintenanceSupport: {
+    description: "Monthly care can be scheduled for ongoing plant health, cleaning, and setup checks.",
+    cost: "Rs. 1,500/month (optional)",
+  },
+  banking: {
+    accountHolder: "NatureLink Education Network Pvt. Ltd.",
+    bank: "ICICI Bank, R.N. Mukherjee Road, Kolkata",
+    accountNo: "000605501516",
+    ifsc: "ICIC0000006",
+  },
+  termsAndConditions: [
+    "50% payment upon confirmation, 40% prior to dispatch, and 10% upon completion.",
+    "Work begins after advance payment confirmation.",
+    "Final quantities and specifications may vary based on site conditions.",
+    "Monthly maintenance is optional and billed separately unless included in writing.",
+  ],
+  preparedBy: {
+    name: "Reena J Sarkar",
+    title: "Co-Founder, KarmYog for the 21st Century",
+    phone: "+91 98300 24611",
+    email: "reenajs@ky21c.org",
+  },
+};

@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+dist
+.env*.local
+*.log
+.DS_Store
+.vercel
+
+# Local Claude Code settings
+.claude/
+
+# Test outputs (regenerable via API)
+/generated-quotation.pdf
+/single-item.pdf
